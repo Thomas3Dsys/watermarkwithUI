@@ -40,14 +40,20 @@ def get_processed_with_watermark():
     """
     if bad_file_names(False):
         return
-    im = PIL.Image.open(filename)
-    wa = PIL.Image.open(watermark_filename)
+    try:
+        im = PIL.Image.open(filename)
+        wa = PIL.Image.open(watermark_filename)
+    except UnicodeDecodeError as e:
+        messagebox.showerror(title="Unable to decode image", message= f"{e.encoding}: {e.reason}" )
+        return
     return water_factory.merge_by_percentage(im, wa, size_value / 100, position, opacity/100)
 
 
 def preview():
     """ processes and opens a full-size image in order to view before exporting """
-    get_processed_with_watermark().show()
+    preview_image = get_processed_with_watermark()
+    if preview_image:
+        preview_image .show()
 
 
 def bad_file_names(isExport):
